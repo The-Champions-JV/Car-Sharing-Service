@@ -44,10 +44,13 @@ public class Rental {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "rental_date", nullable = false)
     private LocalDateTime rentalDateTime;
-
+    
+    @Column(name = "return_date", nullable = false)
     private LocalDateTime returnDateTime;
 
+    @Column(name = "actual_return_date", nullable = false)
     private LocalDateTime actualReturnDateTime;
 
     @OneToMany(mappedBy = "rental",
