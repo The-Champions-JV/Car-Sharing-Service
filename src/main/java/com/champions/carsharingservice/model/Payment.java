@@ -20,37 +20,43 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"rental"})
-@ToString(exclude = {"rental"})
+@EqualsAndHashCode(exclude = "rental")
+@ToString(exclude = "rental")
 @Entity
 @Table(name = "payments")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentType type;
+
     @Column(nullable = false)
     private URL sessionUrl;
+
     @Column(nullable = false)
     private String sessionId;
+
     @Column(nullable = false)
     private BigDecimal amountToPay;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false) // ?Lilja
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rental_id", nullable = false)
     private Rental rental;
 
-    private enum PaymentStatus {
+    public enum PaymentStatus {
         PENDING,
         PAID,
         CANCELED
     }
 
-    private enum PaymentType {
+    public enum PaymentType {
         PAYMENT,
         FINE
     }
