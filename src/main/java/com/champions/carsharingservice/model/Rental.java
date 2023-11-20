@@ -18,4 +18,8 @@ public class Rental {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "car_id", nullable = false)
     private Car car;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
