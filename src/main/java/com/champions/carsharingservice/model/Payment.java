@@ -17,11 +17,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = "rental")
 @ToString(exclude = "rental")
+@SQLDelete(sql = "UPDATE payments SET is_deleted = true WHERE id=?")
+@Where(clause = "is_deleted=false")
 @Entity
 @Table(name = "payments")
 public class Payment {
@@ -37,18 +41,21 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentType type;
 
-    @Column(nullable = false)
+    @Column(name = "session_url", nullable = false)
     private URL sessionUrl;
 
-    @Column(nullable = false)
+    @Column(name = "session_id", nullable = false)
     private String sessionId;
 
-    @Column(nullable = false)
+    @Column(name = "price", nullable = false)
     private BigDecimal amountToPay;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rental_id", nullable = false)
     private Rental rental;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     public enum PaymentStatus {
         PENDING,
