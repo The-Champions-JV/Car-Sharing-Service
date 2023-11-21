@@ -46,7 +46,7 @@ public class Rental {
 
     @Column(name = "rental_date", nullable = false)
     private LocalDateTime rentalDateTime;
-    
+
     @Column(name = "return_date", nullable = false)
     private LocalDateTime returnDateTime;
 
