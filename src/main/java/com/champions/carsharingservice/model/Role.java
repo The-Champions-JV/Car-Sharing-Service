@@ -11,13 +11,14 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Table(name = "roles")
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"roles", "rentals"})
-public class Role {
+public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +26,11 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private RoleName name;
+
+    @Override
+    public String getAuthority() {
+        return "ROLE_" + name.name();
+    }
 
     public enum RoleName {
         CUSTOMER,
