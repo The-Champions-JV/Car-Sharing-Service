@@ -50,7 +50,7 @@ public class Rental {
     @Column(name = "return_date", nullable = false)
     private LocalDateTime returnDateTime;
 
-    @Column(name = "actual_return_date", nullable = false)
+    @Column(name = "actual_return_date")
     private LocalDateTime actualReturnDateTime;
 
     @OneToMany(mappedBy = "rental",
