@@ -29,7 +29,7 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalDto createRental(CreateRentalRequestDto requestDto) {
+    public RentalDto createRental(CreateRentalRequestDto requestDto, Long userId) {
         Car car = carRepository.findById(requestDto.carId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find car by id "
                         + requestDto.carId()));
@@ -39,19 +39,11 @@ public class RentalServiceImpl implements RentalService {
         car.setInventory(car.getInventory() - 1);
         Rental rental = new Rental();
         rental.setCar(car);
-        rental.setUser(userRepository.getReferenceById(1L));
+        rental.setUser(userRepository.getReferenceById(userId));
         rental.setRentalDateTime(LocalDateTime.now());
         rental.setReturnDateTime(requestDto.returnDateTime());
         // Вираховується ціна залежно від дати
         return rentalMapper.toDto(rentalRepository.save(rental));
-    }
-
-    @Override
-    public RentalDto findRentalById(Long userId, Long rentalId) {
-        Rental rental = rentalRepository.findRentalByIdAndUserId(rentalId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("Can't find rental by id "
-                        + rentalId));
-        return rentalMapper.toDto(rental);
     }
 
     @Override
@@ -79,8 +71,8 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalDto setActualReturnDate(Long userId, Long rentalId) {
-        Rental rental = rentalRepository.findRentalByIdAndUserId(rentalId, userId)
+    public RentalDto setActualReturnDate(Long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find rental by id "
                         + rentalId));
         if (rental.getActualReturnDateTime() != null) {

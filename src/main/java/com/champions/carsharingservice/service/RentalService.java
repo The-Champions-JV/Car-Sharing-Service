@@ -6,9 +6,8 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 public interface RentalService {
-    RentalDto createRental(CreateRentalRequestDto requestDto);
+    RentalDto createRental(CreateRentalRequestDto requestDto, Long userId);
 
-    RentalDto findRentalById(Long userId, Long rentalId);
 
     List<RentalDto> getAllRentals(Long userId, Pageable pageable);
 
@@ -16,5 +15,5 @@ public interface RentalService {
 
     List<RentalDto> getAllNotActiveRentals(Long userId, Pageable pageable);
 
-    RentalDto setActualReturnDate(Long userId, Long rentalId);
+    RentalDto setActualReturnDate(Long rentalId);
 }

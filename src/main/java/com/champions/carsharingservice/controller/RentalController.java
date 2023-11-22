@@ -2,6 +2,7 @@ package com.champions.carsharingservice.controller;
 
 import com.champions.carsharingservice.dto.rental.CreateRentalRequestDto;
 import com.champions.carsharingservice.dto.rental.RentalDto;
+import com.champions.carsharingservice.model.User;
 import com.champions.carsharingservice.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,26 +30,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class RentalController {
     private final RentalService rentalService;
 
-    //user
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     @Operation(summary = "Create new rental", description = """
             Create a new rental 
             Prams: carId, returnDateTime
             """)
-    public RentalDto createRental(@RequestBody CreateRentalRequestDto requestDto) {
-        return rentalService.createRental(requestDto);
+    public RentalDto createRental(@RequestBody CreateRentalRequestDto requestDto,
+                                  Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return rentalService.createRental(requestDto, user.getId());
     }
 
-    //user
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
     @Operation(summary = "Get all rentals",
             description = "Get all rentals for user, Pageable default: page = 0, size = 10")
-    public List<RentalDto> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable) {
-        //User user = (User) authentication.getPrincipal();
-        return rentalService.getAllRentals(1L, pageable);
+    public List<RentalDto> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable,
+                                  Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return rentalService.getAllRentals(user.getId(), pageable);
     }
 
-    //User
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/")
     @Operation(summary = "Get all rentals by activeness",
             description = """
@@ -55,16 +61,18 @@ public class RentalController {
                     """)
     public List<RentalDto> getAllRentalsByActiveness(@RequestParam(name = "is_active")
                                                      boolean isActive,
+                                                     Authentication authentication,
                                                      @PageableDefault(page = 0, size = 10)
                                                      Pageable pageable) {
+        User user = (User) authentication.getPrincipal();
         if (isActive) {
-            return rentalService.getAllActiveRentals(1L, pageable);
+            return rentalService.getAllActiveRentals(user.getId(), pageable);
         } else {
-            return rentalService.getAllNotActiveRentals(1L, pageable);
+            return rentalService.getAllNotActiveRentals(user.getId(), pageable);
         }
     }
 
-    //Manager
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/search/")
     @Operation(summary = "Search rentals for manager",
             description = """
@@ -86,14 +94,14 @@ public class RentalController {
         }
     }
 
-    //Manager
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/{id}/return")
     @Operation(summary = "Return rental by id", description = """
            Return rental by setting actual return date
-           if actual return date is after return date, new payment(Fine) is created 
+           if actual return date is after return date, new payment(Fine) is created
            depending on how late the return was
            """)
     public RentalDto returnRental(@PathVariable @Positive Long id) {
-        return rentalService.setActualReturnDate(1L, id);
+        return rentalService.setActualReturnDate(id);
     }
 }
