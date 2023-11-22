@@ -97,10 +97,10 @@ public class RentalController {
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/{id}/return")
     @Operation(summary = "Return rental by id", description = """
-           Return rental by setting actual return date
-           if actual return date is after return date, new payment(Fine) is created
-           depending on how late the return was
-           """)
+            Return rental by setting actual return date
+            if actual return date is after return date, new payment(Fine) is created
+            depending on how late the return was
+            """)
     public RentalDto returnRental(@PathVariable @Positive Long id) {
         return rentalService.setActualReturnDate(id);
     }
