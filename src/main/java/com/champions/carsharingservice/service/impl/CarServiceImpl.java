@@ -19,7 +19,6 @@ public class CarServiceImpl implements CarService {
     private final CarMapper carMapper;
 
     @Override
-    @Transactional
     public CarDto save(CreateCarRequestDto request) {
         Car car = carMapper.toEntity(request);
         car.setType(Car.CarType.valueOf(request.type()));
@@ -27,7 +26,6 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    @Transactional
     public List<CarDto> getAll() {
         return carRepository.findAll().stream()
                 .map(carMapper::toDto)
@@ -35,17 +33,16 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    @Transactional
     public CarDto getById(Long id) {
         return carMapper.toDto(carById(id));
     }
 
     @Override
-    @Transactional
     public CarDto update(Long id, CreateCarRequestDto request) {
-        Car car = carById(id);
-        updateValues(car, request);
-        return carMapper.toDto(carRepository.save(car));
+        Car carToUpdate = carMapper.toEntity(request);
+        carMapper.updateCar(request, carToUpdate);
+        Car updatedCar = carRepository.save(carToUpdate);
+        return carMapper.toDto(updatedCar);
     }
 
     @Override
@@ -61,13 +58,5 @@ public class CarServiceImpl implements CarService {
         return carRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find car by id: " + id)
         );
-    }
-
-    private void updateValues(Car car, CreateCarRequestDto request) {
-        car.setModel(request.model());
-        car.setBrand(request.brand());
-        car.setType(Car.CarType.valueOf(request.type()));
-        car.setInventory(request.amountAvailable());
-        car.setDailyFee(request.dailyFee());
     }
 }
