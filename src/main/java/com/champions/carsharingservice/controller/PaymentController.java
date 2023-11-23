@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/payments")
-@Tag(name = "Rental management", description = "Endpoints for managing rentals")
+@Tag(name = "Payment management", description = "Endpoints for managing payments")
 public class PaymentController {
     private final PaymentService paymentService;
 
     @ResponseBody
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
-    @Operation(summary = "Get all rentals",
+    @Operation(summary = "Get all payments",
             description = "Get all rentals for user, Pageable default: page = 0, size = 10")
     public List<PaymentDto> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable,
                                    Authentication authentication) {
@@ -44,8 +44,10 @@ public class PaymentController {
     @ResponseBody
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/search")
-    @Operation(summary = "Get all rentals",
-            description = "Get all rentals for user, Pageable default: page = 0, size = 10")
+    @Operation(summary = "Get all payments by status",
+            description = """
+                    Get all payments by status (PAID/PENDING/CANCELED) for user, 
+                    Pageable default: page = 0, size = 10""")
     public List<PaymentDto> searchPayments(@RequestParam(name = "status")
                                            String status,
                                            @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -57,17 +59,22 @@ public class PaymentController {
     @ResponseBody
     @PostMapping("/pay")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Create ")
     public PaymentDto createPaymentIntent(@RequestBody @Valid CreatePaymentRequestDto requestDto) {
         return paymentService.createPaymentSession(requestDto);
     }
 
     @GetMapping("/success")
+    @Operation(summary = "",
+                description = "")
     public String success(@RequestParam String sessionId) {
         paymentService.getSuccessfulPayment(sessionId);
         return "success";
     }
 
     @GetMapping("/cancel")
+    @Operation(summary = "",
+            description = "Customer is redirected to a page when ")
     public String afterCancelPayment(@RequestParam String sessionId) {
         paymentService.getCancelledPayment(sessionId);
         return "cancel";
