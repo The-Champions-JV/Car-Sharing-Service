@@ -46,7 +46,8 @@ public class UserServiceImpl implements UserService {
         );
         Role roleByName = roleRepository.findRoleByName(Role.RoleName.valueOf(newRole))
                 .orElseThrow(
-                        () -> new EntityNotFoundException("There is no role with the name: " + newRole)
+                        () -> new EntityNotFoundException("There is no role with the name: "
+                                + newRole)
                 );
         user.getRoles().add(roleByName);
         return userMapper.toUserResponse(userRepository.save(user));
