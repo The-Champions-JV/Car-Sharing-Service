@@ -168,7 +168,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new RuntimeException("There is no session by id " + sessionId));
         payment.setStatus(Payment.PaymentStatus.CANCELED);
-        notificationService.sendMessageAboutCanceledPayment(payment,payment.getRental().getCar());
+        notificationService.sendMessageAboutCanceledPayment(payment, payment.getRental().getCar());
         return paymentMapper.toDto(paymentRepository.save(payment));
     }
 }
