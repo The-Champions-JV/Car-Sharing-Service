@@ -43,7 +43,9 @@ public class SecurityConfig {
                                         antMatcher("/v3/api-docs/**"),
                                         antMatcher("/api/hello"),
                                         antMatcher("/api/cars/**"),
-                                        antMatcher("/errors")
+                                        antMatcher("/errors"),
+                                        antMatcher("/payments/success"),
+                                        antMatcher("/payments/cancel")
                                 )
                                 .permitAll()
                                 .anyRequest()
