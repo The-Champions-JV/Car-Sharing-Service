@@ -9,6 +9,7 @@ import com.champions.carsharingservice.model.Payment;
 import com.champions.carsharingservice.model.Rental;
 import com.champions.carsharingservice.repository.PaymentRepository;
 import com.champions.carsharingservice.repository.RentalRepository;
+import com.champions.carsharingservice.service.NotificationService;
 import com.champions.carsharingservice.service.PaymentService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -41,6 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final RentalRepository rentalRepository;
     private final PaymentMapper paymentMapper;
+    private final NotificationService notificationService;
 
     @Value("${stripe.secret-key}")
     private String stripeKey;
@@ -141,11 +143,13 @@ public class PaymentServiceImpl implements PaymentService {
         return payment;
     }
 
+    @Transactional
     @Override
     public PaymentDto getSuccessfulPayment(String sessionId) {
         Payment payment = paymentRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new RuntimeException("There is no session by id " + sessionId));
         payment.setStatus(Payment.PaymentStatus.PAID);
+        notificationService.sendMessageAboutSuccessPayment(payment, payment.getRental().getCar());
         return paymentMapper.toDto(paymentRepository.save(payment));
     }
 
@@ -154,6 +158,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new RuntimeException("There is no session by id " + sessionId));
         payment.setStatus(Payment.PaymentStatus.CANCELED);
+        notificationService.sendMessageAboutCanceledPayment(payment,payment.getRental().getCar());
         return paymentMapper.toDto(paymentRepository.save(payment));
     }
 }
