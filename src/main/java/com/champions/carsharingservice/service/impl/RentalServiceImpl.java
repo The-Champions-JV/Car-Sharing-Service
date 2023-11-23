@@ -11,6 +11,7 @@ import com.champions.carsharingservice.model.Rental;
 import com.champions.carsharingservice.repository.CarRepository;
 import com.champions.carsharingservice.repository.RentalRepository;
 import com.champions.carsharingservice.repository.UserRepository;
+import com.champions.carsharingservice.service.NotificationService;
 import com.champions.carsharingservice.service.RentalService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ public class RentalServiceImpl implements RentalService {
     private final UserRepository userRepository;
     private final RentalRepository rentalRepository;
     private final RentalMapper rentalMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -43,6 +45,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setRentalDateTime(LocalDateTime.now());
         rental.setReturnDateTime(requestDto.returnDateTime());
         // Вираховується ціна залежно від дати
+        notificationService.sendMessageAboutCreatedRental(rental);
         return rentalMapper.toDto(rentalRepository.save(rental));
     }
 
@@ -80,6 +83,7 @@ public class RentalServiceImpl implements RentalService {
         }
         rental.setActualReturnDateTime(LocalDateTime.now());
         if (rental.getActualReturnDateTime().isAfter(rental.getReturnDateTime())) {
+            notificationService.sendMessageAboutOverdueRental(rental);
             // додається оплата FINE
             // rental.getPayments().add();
             System.out.println("Fine");

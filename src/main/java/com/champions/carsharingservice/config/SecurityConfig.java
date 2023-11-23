@@ -42,7 +42,10 @@ public class SecurityConfig {
                                         antMatcher("/swagger-ui/**"),
                                         antMatcher("/v3/api-docs/**"),
                                         antMatcher("/api/hello"),
-                                        antMatcher("/errors")
+                                        antMatcher("/api/cars/**"),
+                                        antMatcher("/errors"),
+                                        antMatcher("/payments/success"),
+                                        antMatcher("/payments/cancel")
                                 )
                                 .permitAll()
                                 .anyRequest()
