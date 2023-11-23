@@ -1,7 +1,9 @@
 package com.champions.carsharingservice.service.impl;
 
+import com.champions.carsharingservice.dto.UserInfoResponseDto;
 import com.champions.carsharingservice.dto.UserRegistrationRequestDto;
 import com.champions.carsharingservice.dto.UserResponseDto;
+import com.champions.carsharingservice.dto.UserUpdateRequestDto;
 import com.champions.carsharingservice.exception.RegistrationException;
 import com.champions.carsharingservice.mapper.UserMapper;
 import com.champions.carsharingservice.model.Role;
@@ -27,10 +29,35 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(requestDto.email())) {
             throw new RegistrationException("Unable to complete registration. User already exists");
         }
-        Role defaultRole = roleRepository.findRoleByName(Role.RoleName.CUSTOMER);
+        Role defaultRole = roleRepository.findRoleByName(Role.RoleName.CUSTOMER).orElseThrow();
         User user = userMapper.toUser(requestDto);
         user.setRoles(Set.of(defaultRole));
         user.setPassword(passwordEncoder.encode(requestDto.password()));
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public UserResponseDto updateUserRole(Long id, String newRole) {
+        User user = userRepository.findById(id).orElseThrow();
+        Role roleByName = roleRepository.findRoleByName(Role.RoleName.valueOf(newRole))
+                .orElseThrow();
+        Set<Role> roles = user.getRoles();
+        roles.add(roleByName);
+        user.setRoles(roles);
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public UserInfoResponseDto getUserInfo(Long id) {
+        User user = userRepository.findById(id).orElseThrow();
+        return userMapper.toUserInfo(user);
+    }
+
+    @Override
+    public UserInfoResponseDto updateUserById(Long id, UserUpdateRequestDto requestDto) {
+        User user = userRepository.findById(id).orElseThrow();
+        userMapper.toUserUpdate(requestDto, user);
+        User updateUser = userRepository.save(user);
+        return userMapper.toUserInfo(updateUser);
     }
 }
