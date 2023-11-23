@@ -54,6 +54,19 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void sendMessageAboutCanceledPayment(Payment payment, Car car) {
+        String message = """
+                Oops, something went wrong..
+                Your payment for car: %s
+                is failed. Try again.
+                
+                You should pay: %sUSD
+                """.formatted(formatCarInfo(car),
+                                payment.getAmountToPay());
+        carSharingBot.sendMessage(message);
+    }
+
+    @Override
     public void sendScheduledMessageAboutOverdueRentals(Set<Rental> overdueRentals) {
         String message = """
                 You have overdue rentals. Don't forget to return:
