@@ -10,24 +10,29 @@ import com.champions.carsharingservice.service.CarService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
+    private static final String DEFAULT_IMAGE_URL = "https://i.ibb.co/N6JDyLJ/car.png";
     private final CarRepository carRepository;
     private final CarMapper carMapper;
 
     @Override
     public CarDto save(CreateCarRequestDto request) {
         Car car = carMapper.toEntity(request);
+        if (request.imageUrl() == null) {
+            car.setImageUrl(DEFAULT_IMAGE_URL);
+        }
         car.setType(Car.CarType.valueOf(request.type()));
         return carMapper.toDto(carRepository.save(car));
     }
 
     @Override
-    public List<CarDto> getAll() {
-        return carRepository.findAll().stream()
+    public List<CarDto> getAll(Pageable pageable) {
+        return carRepository.findAll(pageable).stream()
                 .map(carMapper::toDto)
                 .toList();
     }
@@ -38,15 +43,17 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional
     public CarDto update(Long id, CreateCarRequestDto request) {
-        Car carToUpdate = carMapper.toEntity(request);
+        Car carToUpdate = carById(id);
         carMapper.updateCar(request, carToUpdate);
-        Car updatedCar = carRepository.save(carToUpdate);
-        return carMapper.toDto(updatedCar);
+        if (request.imageUrl() == null) {
+            carToUpdate.setImageUrl(DEFAULT_IMAGE_URL);
+        }
+        return carMapper.toDto(carToUpdate);
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         if (!carRepository.existsById(id)) {
             throw new EntityNotFoundException("Can't find car by id: " + id);

@@ -25,17 +25,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/rentals")
-@Tag(name = "Rental management", description = "Endpoints for managing rentals")
+@RequestMapping("/api/rentals")
+@Tag(name = "Rental management",
+        description = "Endpoints for managing and browsing rentals depending on you role")
 public class RentalController {
     private final RentalService rentalService;
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
-    @Operation(summary = "Create new rental", description = """
+    @Operation(summary = "Create new rental",
+            description = """
             Create a new rental 
-            Prams: carId, returnDateTime
-            """)
+            Prams: carId, returnDateTime""")
     public RentalDto createRental(@RequestBody CreateRentalRequestDto requestDto,
                                   Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -45,7 +46,9 @@ public class RentalController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
     @Operation(summary = "Get all rentals",
-            description = "Get all rentals for user, Pageable default: page = 0, size = 10")
+            description = """
+                    Get all rentals for user,
+                    Pageable default: page = 0, size = 10""")
     public List<RentalDto> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable,
                                   Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -56,8 +59,9 @@ public class RentalController {
     @GetMapping("/")
     @Operation(summary = "Get all rentals by activeness",
             description = """
-                    Get all rentals by activeness (if actual return date is null = active)
-                     for user, Pageable default: page = 0, size = 10
+                    Get all user's rentals by their activeness 
+                    (if actual return date is null -> active)
+                    Pageable default: page = 0, size = 10
                     """)
     public List<RentalDto> getAllRentalsByActiveness(@RequestParam(name = "is_active")
                                                      boolean isActive,
@@ -96,7 +100,8 @@ public class RentalController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/{id}/return")
-    @Operation(summary = "Return rental by id", description = """
+    @Operation(summary = "Return rental by id",
+            description = """
             Return rental by setting actual return date
             if actual return date is after return date, new payment(Fine) is created
             depending on how late the return was
