@@ -15,27 +15,34 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(TelegramBotInitException.class)
+    protected ResponseEntity<Object> handleTelegramBotInitException(TelegramBotInitException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler(RegistrationException.class)
-    protected ResponseEntity<Object> handleRegistrationException(RegistrationException e) {
+    protected ResponseEntity<Object> handleRegistrationException(RegistrationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(e.getMessage());
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler(RentalNotActiveException.class)
-    protected ResponseEntity<Object> handleRentalException(RentalNotActiveException e) {
+    protected ResponseEntity<Object> handleRentalException(RentalNotActiveException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler(NoCarsAvailableException.class)
-    protected ResponseEntity<Object> handleNoCarsAvailableException(NoCarsAvailableException e) {
+    protected ResponseEntity<Object> handleNoCarsAvailableException(NoCarsAvailableException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
+                .body(ex.getMessage());
     }
 
     @Override
