@@ -25,7 +25,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendMessageAboutCreatedRental(Rental rental) {
         String carInfo = formatCarInfo(rental.getCar());
         String dateInfo = formatDate(rental.getRentalDateTime(), rental.getReturnDateTime());
-        String name = "Dear, %s".formatted(rental.getUser().getFirstName());
+        String name = "Dear, %s 🙌".formatted(rental.getUser().getFirstName());
         String message = name + System.lineSeparator()
                 + "You rent car: " + System.lineSeparator()
                 + carInfo + System.lineSeparator()
@@ -39,7 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
         String message = """
                 You should have returned car: 
                 %s,
-                on %s
+                on 🕛 %s
                 """.formatted(formatCarInfo(car),
                 formatDateForOverdueRental(rental.getReturnDateTime(),
                         rental.getActualReturnDateTime()));
@@ -100,12 +100,16 @@ public class NotificationServiceImpl implements NotificationService {
         String formattedActualReturnDateTime = actualReturnDateTime.format(formatter);
         return """
                 %s,
-                but you return it on %s
+                but you return it on 🕑 %s
                 """.formatted(formattedReturnDateTime, formattedActualReturnDateTime);
     }
 
     public String formatCarInfo(Car car) {
-        return " model ➡ %s, brand ➡ %s, type ➡ %s"
+        return """
+                🚗 
+                model ➡ %s, 
+                brand ➡ %s, 
+                type ➡ %s"""
                 .formatted(car.getModel(), car.getBrand(), car.getType().name());
 
     }
@@ -114,9 +118,9 @@ public class NotificationServiceImpl implements NotificationService {
         String formattedRentalDateTime = rentalDateTime.format(formatter);
         String formattedReturnDateTime = returnDateTime.format(formatter);
         return """
-                Your rent day and time is: %s,
-                you should return car on %s.
-                If you don't return the car on time, you will be fined.
+                Your rent day and time is ⌛: %s,
+                you should return car on ⏳ %s.
+                If you don't return the car on time, you will be fined 💸
                 """.formatted(formattedRentalDateTime, formattedReturnDateTime);
     }
 }

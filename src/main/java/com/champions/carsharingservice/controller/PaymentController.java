@@ -33,8 +33,10 @@ public class PaymentController {
     @ResponseBody
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
-    @Operation(summary = "Get all payments",
-            description = "Get all rentals for user, Pageable default: page = 0, size = 10")
+    @Operation(summary = "Get all user's payments",
+            description = """
+                    Get all user's payments.
+                    Pageable default: page = 0, size = 10""")
     public List<PaymentDto> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable,
                                    Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -59,22 +61,27 @@ public class PaymentController {
     @ResponseBody
     @PostMapping("/pay")
     @PreAuthorize("hasRole('CUSTOMER')")
-    @Operation(summary = "Create ")
+    @Operation(summary = "Create session",
+                description = "Session is created to enable user to use Stripe")
     public PaymentDto createPaymentIntent(@RequestBody @Valid CreatePaymentRequestDto requestDto) {
         return paymentService.createPaymentSession(requestDto);
     }
 
     @GetMapping("/success")
-    @Operation(summary = "",
-                description = "")
+    @Operation(summary = "Page redirection on successful payment",
+                description = """
+                        On finishing payment in Stripe user is 
+                        redirected to page on successful payment""")
     public String success(@RequestParam String sessionId) {
         paymentService.getSuccessfulPayment(sessionId);
         return "success";
     }
 
     @GetMapping("/cancel")
-    @Operation(summary = "",
-            description = "Customer is redirected to a page when ")
+    @Operation(summary = "Page redirection on canceled payment",
+            description = """
+                        On canceling payment in Stripe user is 
+                        redirected to page on canceled payment""")
     public String afterCancelPayment(@RequestParam String sessionId) {
         paymentService.getCancelledPayment(sessionId);
         return "cancel";
