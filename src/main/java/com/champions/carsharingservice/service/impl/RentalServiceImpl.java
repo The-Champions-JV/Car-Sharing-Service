@@ -42,7 +42,6 @@ public class RentalServiceImpl implements RentalService {
         rental.setUser(userRepository.getReferenceById(userId));
         rental.setRentalDateTime(LocalDateTime.now());
         rental.setReturnDateTime(requestDto.returnDateTime());
-        // Вираховується ціна залежно від дати
         return rentalMapper.toDto(rentalRepository.save(rental));
     }
 
@@ -79,11 +78,6 @@ public class RentalServiceImpl implements RentalService {
             throw new RentalNotActiveException("This rental has already been returned");
         }
         rental.setActualReturnDateTime(LocalDateTime.now());
-        if (rental.getActualReturnDateTime().isAfter(rental.getReturnDateTime())) {
-            // додається оплата FINE
-            // rental.getPayments().add();
-            System.out.println("Fine");
-        }
         Car car = rental.getCar();
         car.setInventory(car.getInventory() + 1);
         return rentalMapper.toDto(rental);
