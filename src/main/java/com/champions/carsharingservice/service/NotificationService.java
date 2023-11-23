@@ -13,6 +13,8 @@ public interface NotificationService {
 
     void sendMessageAboutSuccessPayment(Payment payment, Car car);
 
+    void sendMessageAboutCanceledPayment(Payment payment, Car car);
+
     void sendScheduledMessageAboutOverdueRentals(Set<Rental> overdueRentals);
 
     void sendNoRentalsOverdueMessage();

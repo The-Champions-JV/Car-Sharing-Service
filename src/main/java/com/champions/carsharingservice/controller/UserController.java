@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequiredArgsConstructor
-@Tag(name = "User Controller",
+@Tag(name = "User Management",
         description = "Endpoints for updating and getting user info")
 @RequestMapping("/api/users")
 public class UserController {
