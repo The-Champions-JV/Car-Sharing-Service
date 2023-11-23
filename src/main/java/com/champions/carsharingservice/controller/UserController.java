@@ -48,7 +48,7 @@ public class UserController {
     @Operation(summary = "Update User", description = "Update users firstName and lastName by id")
     @PreAuthorize("hasRole('MANAGER')")
     public UserInfoResponseDto updateUserById(Authentication authentication,
-                                               @RequestBody UserUpdateRequestDto requestDto) {
+                                              @RequestBody UserUpdateRequestDto requestDto) {
         User principal = (User) authentication.getPrincipal();
         return userService.updateUserById(principal.getId(), requestDto);
     }
