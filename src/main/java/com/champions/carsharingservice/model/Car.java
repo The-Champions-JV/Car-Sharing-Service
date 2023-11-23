@@ -52,6 +52,9 @@ public class Car {
     @OneToMany(mappedBy = "car", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private Set<Rental> rentals = new HashSet<>();
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(nullable = false, name = "is_deleted")
     private boolean isDeleted = false;
 
