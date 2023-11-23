@@ -17,5 +17,4 @@ public interface CarMapper {
     CarDto toDto(Car car);
 
     void updateCar(CreateCarRequestDto dto, @MappingTarget Car car);
-
 }

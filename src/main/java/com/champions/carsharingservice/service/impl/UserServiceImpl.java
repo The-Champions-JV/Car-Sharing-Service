@@ -4,6 +4,7 @@ import com.champions.carsharingservice.dto.UserInfoResponseDto;
 import com.champions.carsharingservice.dto.UserRegistrationRequestDto;
 import com.champions.carsharingservice.dto.UserResponseDto;
 import com.champions.carsharingservice.dto.UserUpdateRequestDto;
+import com.champions.carsharingservice.exception.EntityNotFoundException;
 import com.champions.carsharingservice.exception.RegistrationException;
 import com.champions.carsharingservice.mapper.UserMapper;
 import com.champions.carsharingservice.model.Role;
@@ -15,6 +16,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,26 +38,33 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public UserResponseDto updateUserRole(Long id, String newRole) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("There is no user with id: " + id)
+        );
         Role roleByName = roleRepository.findRoleByName(Role.RoleName.valueOf(newRole))
-                .orElseThrow();
-        Set<Role> roles = user.getRoles();
-        roles.add(roleByName);
-        user.setRoles(roles);
+                .orElseThrow(
+                        () -> new EntityNotFoundException("There is no role with the name: " + newRole)
+                );
+        user.getRoles().add(roleByName);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
     public UserInfoResponseDto getUserInfo(Long id) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("There is no user with id: " + id)
+        );
         return userMapper.toUserInfo(user);
     }
 
     @Override
     public UserInfoResponseDto updateUserById(Long id, UserUpdateRequestDto requestDto) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("There is no user with id: " + id)
+        );
         userMapper.toUserUpdate(requestDto, user);
         User updateUser = userRepository.save(user);
         return userMapper.toUserInfo(updateUser);

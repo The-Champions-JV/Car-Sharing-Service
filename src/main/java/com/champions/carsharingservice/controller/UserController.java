@@ -8,6 +8,7 @@ import com.champions.carsharingservice.model.User;
 import com.champions.carsharingservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,33 +24,39 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
 @Tag(name = "User Controller",
-        description = "Endpoints for update and get")
+        description = "Endpoints for updating and getting user info")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
 
-    @PutMapping("/{id}/role")
     @PreAuthorize("hasRole('MANAGER')")
-    public UserResponseDto updateUserRole(@PathVariable Long id,
+    @PutMapping("/{id}/role")
+    @Operation(summary = "Update user's role",
+                description = """
+                        Manager can update user's role.
+                        Params: new role""")
+    public UserResponseDto updateUserRole(@PathVariable @Positive Long id,
                                           @RequestBody UserUpdateRoleRequestDto newRole) {
         return userService.updateUserRole(id, newRole.role());
     }
 
-    @GetMapping("/me")
-    @Operation(summary = "Get a user by id", description = "Get a user by id")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/me")
+    @Operation(summary = "Get info about user",
+            description = "Get user's firstname, lastname and email by user's id")
     public UserInfoResponseDto getUserInfo(Authentication authentication) {
-        User principal = (User) authentication.getPrincipal();
-        return userService.getUserInfo(principal.getId());
+        User user = (User) authentication.getPrincipal();
+        return userService.getUserInfo(user.getId());
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PatchMapping("/update")
-    @Operation(summary = "Update User", description = "Update users firstName and lastName by id")
-    @PreAuthorize("hasRole('MANAGER')")
+    @Operation(summary = "Update user info",
+            description = "Update user's firstName and lastName by user's id")
     public UserInfoResponseDto updateUserById(Authentication authentication,
                                                @RequestBody UserUpdateRequestDto requestDto) {
-        User principal = (User) authentication.getPrincipal();
-        return userService.updateUserById(principal.getId(), requestDto);
+        User user = (User) authentication.getPrincipal();
+        return userService.updateUserById(user.getId(), requestDto);
     }
 }

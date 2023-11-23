@@ -10,6 +10,7 @@ import com.champions.carsharingservice.service.CarService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,8 +27,8 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<CarDto> getAll() {
-        return carRepository.findAll().stream()
+    public List<CarDto> getAll(Pageable pageable) {
+        return carRepository.findAll(pageable).stream()
                 .map(carMapper::toDto)
                 .toList();
     }
