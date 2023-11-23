@@ -19,17 +19,6 @@ public class CarSharingBot extends TelegramLongPollingBot {
     @Value("${bot.token}")
     private String token;
 
-    /*
-        1. You should create your bot in Telegram (I will send you a video)
-        2. Save token of the bot to env. file and after as variable in application.properties
-        3. Save name of your bot to env. file and after as variable in application.properties
-        4. Run the app and click /start in your bot
-        5. In the console you will see chat id which you should add to
-        env. file and after as variable in application.properties (just numbers)
-        6. After all members do that we will delete this instruction
-        and functionality to get chat id in method onUpdateReceive
-     */
-
     @Value("${bot.chat}")
     private String chatId;
 
