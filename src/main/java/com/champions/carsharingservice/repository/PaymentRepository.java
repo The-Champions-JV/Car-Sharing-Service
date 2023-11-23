@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     List<Payment> findAllByRentalUserId(Long id, Pageable pageable);
 
+    List<Payment> findAllByStatus(Payment.PaymentStatus status);
+
     Optional<Payment> findBySessionId(String sessionId);
 
     List<Payment> findAllByRentalId(Long rentalId);
