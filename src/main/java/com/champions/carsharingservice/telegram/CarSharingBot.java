@@ -48,13 +48,15 @@ public class CarSharingBot extends TelegramLongPollingBot {
 
     private void sendOnStartCommand(String name) {
         String message = """
-                Hi, %s, nice to meet you!
+                Hi, %s, nice to meet you!😄
+                
                 In this bot you will get notifications on
-                - created rentals
-                - successful payments
-                - overdue rentals (we hope you won't have them)
-                - notifications if you have any overdue rentals
-                We hope you will enjoy your trip!
+                🔹 created rentals
+                🔹 successful payments
+                🔹 overdue rentals (we hope you won't have them 😉)
+                🔹 notifications if you have any overdue rentals
+                
+                We hope you will enjoy your trip!🌎
                 """.formatted(name);
         sendMessage(message);
     }
