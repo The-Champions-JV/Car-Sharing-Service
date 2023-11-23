@@ -60,6 +60,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public List<PaymentDto> getPaymentsByStatus(Long userId, String status, Pageable pageable) {
+        return paymentRepository
+                .findAllByStatus(Payment.PaymentStatus.valueOf(status.toUpperCase()))
+                .stream()
+                .map(paymentMapper::toDto)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public PaymentDto createPaymentSession(CreatePaymentRequestDto request) {
         Optional<Payment> paymentFromDb = paymentRepository.findAllByRentalId(request.rentalId())
