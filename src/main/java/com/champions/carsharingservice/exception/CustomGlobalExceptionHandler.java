@@ -15,6 +15,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(TelegramBotSendMessageException.class)
+    protected ResponseEntity<Object> handleTelegramBotSendMessageException(TelegramBotSendMessageException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(ex.getMessage());
+    }
     @ExceptionHandler(TelegramBotInitException.class)
     protected ResponseEntity<Object> handleTelegramBotInitException(TelegramBotInitException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
