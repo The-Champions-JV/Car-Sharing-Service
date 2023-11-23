@@ -20,13 +20,13 @@ import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-@Entity
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"rentals"})
 @ToString(exclude = {"rentals"})
 @SQLDelete(sql = "UPDATE cars SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted=false")
+@Entity
 @Table(name = "cars")
 public class Car {
     @Id
@@ -49,7 +49,9 @@ public class Car {
     @Column(nullable = false, name = "daily_fee")
     private BigDecimal dailyFee;
 
-    @OneToMany(mappedBy = "car", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "car",
+            orphanRemoval = true,
+            cascade = CascadeType.REMOVE)
     private Set<Rental> rentals = new HashSet<>();
 
     @Column(name = "image_url")
