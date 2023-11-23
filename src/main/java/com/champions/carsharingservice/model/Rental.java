@@ -54,7 +54,7 @@ public class Rental {
     private LocalDateTime actualReturnDateTime;
 
     @OneToMany(mappedBy = "rental",
-            cascade = CascadeType.REMOVE,
+            cascade = CascadeType.ALL,
             orphanRemoval = true)
     private Set<Payment> payments = new HashSet<>();
 
