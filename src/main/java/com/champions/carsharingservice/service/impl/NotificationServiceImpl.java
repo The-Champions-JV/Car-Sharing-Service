@@ -25,9 +25,10 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendMessageAboutCreatedRental(Rental rental) {
         String carInfo = formatCarInfo(rental.getCar());
         String dateInfo = formatDate(rental.getRentalDateTime(), rental.getReturnDateTime());
-        String name = "Dear, %s".formatted(rental.getUser().getFirstName());
+        String name = "Dear, %s 🙌".formatted(rental.getUser().getFirstName());
         String message = name + System.lineSeparator()
-                + "You rent car: " + carInfo + System.lineSeparator()
+                + "You rent car: " + System.lineSeparator()
+                + carInfo + System.lineSeparator()
                 + dateInfo;
         carSharingBot.sendMessage(message);
     }
@@ -36,8 +37,9 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendMessageAboutOverdueRental(Rental rental) {
         Car car = rental.getCar();
         String message = """
-                You should have returned car: %s,
-                on %s
+                You should have returned car: 
+                %s,
+                on 🕛 %s
                 """.formatted(formatCarInfo(car),
                 formatDateForOverdueRental(rental.getReturnDateTime(),
                         rental.getActualReturnDateTime()));
@@ -47,8 +49,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendMessageAboutSuccessPayment(Payment payment, Car car) {
         String message = """
-                You successfully paid for car: %s,
-                sum of payment: %s
+                ✅ You successfully paid for car: %s,
+                
+                sum of payment💳: %s
                 """.formatted(formatCarInfo(car), payment.getAmountToPay());
         carSharingBot.sendMessage(message);
     }
@@ -56,11 +59,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendMessageAboutCanceledPayment(Payment payment, Car car) {
         String message = """
-                Oops, something went wrong..
+                Oops, something went wrong.. 😣
                 Your payment for car: %s
                 is failed. Try again.
                 
-                You should pay: %sUSD
+                You should pay💳: %sUSD
                 """.formatted(formatCarInfo(car),
                                 payment.getAmountToPay());
         carSharingBot.sendMessage(message);
@@ -69,7 +72,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendScheduledMessageAboutOverdueRentals(Set<Rental> overdueRentals) {
         String message = """
-                You have overdue rentals. Don't forget to return:
+                You have overdue rentals. ⏰ Don't forget to return:
                 %s
                 """.formatted(formatRentals(overdueRentals));
         carSharingBot.sendMessage(message);
@@ -77,7 +80,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendNoRentalsOverdueMessage() {
-        String message = "No rentals overdue today!";
+        String message = "No rentals overdue today!☀";
         carSharingBot.sendMessage(message);
     }
 
@@ -97,12 +100,16 @@ public class NotificationServiceImpl implements NotificationService {
         String formattedActualReturnDateTime = actualReturnDateTime.format(formatter);
         return """
                 %s,
-                but you return it on %s
+                but you return it on 🕑 %s
                 """.formatted(formattedReturnDateTime, formattedActualReturnDateTime);
     }
 
     public String formatCarInfo(Car car) {
-        return "model - %s, brand - %s, type - %s"
+        return """
+                🚗 
+                model ➡ %s, 
+                brand ➡ %s, 
+                type ➡ %s"""
                 .formatted(car.getModel(), car.getBrand(), car.getType().name());
 
     }
@@ -111,9 +118,9 @@ public class NotificationServiceImpl implements NotificationService {
         String formattedRentalDateTime = rentalDateTime.format(formatter);
         String formattedReturnDateTime = returnDateTime.format(formatter);
         return """
-                Your rent day and time is: %s,
-                you should return car on %s.
-                If you don't return the car on time, you will be fined.
+                Your rent day and time is ⌛: %s,
+                you should return car on ⏳ %s.
+                If you don't return the car on time, you will be fined 💸
                 """.formatted(formattedRentalDateTime, formattedReturnDateTime);
     }
 }
