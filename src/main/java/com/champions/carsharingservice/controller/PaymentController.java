@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/payments")
+@RequestMapping("/api/payments")
 @Tag(name = "Payment management", description = "Endpoints for managing payments")
 public class PaymentController {
     private final PaymentService paymentService;
@@ -45,7 +45,7 @@ public class PaymentController {
 
     @ResponseBody
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/search")
+    @GetMapping("/search/")
     @Operation(summary = "Get all payments by status",
             description = """
                     Get all payments by status (PAID/PENDING/CANCELED) for user, 
