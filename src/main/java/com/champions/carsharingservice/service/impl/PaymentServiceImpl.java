@@ -74,12 +74,13 @@ public class PaymentServiceImpl implements PaymentService {
         Optional<Payment> paymentFromDb = paymentRepository.findAllByRentalId(request.rentalId())
                 .stream()
                 .filter(p -> p.getType() == request.paymentType())
+                .filter(p -> p.getStatus() != Payment.PaymentStatus.CANCELED)
                 .findFirst();
 
         if (paymentFromDb.isPresent()) {
             Payment payment = paymentFromDb.get();
             if (payment.getStatus() == Payment.PaymentStatus.PAID) {
-                throw new RuntimeException();
+                throw new EntityNotFoundException("This rental has been paid");
             }
             if (payment.getStatus() == Payment.PaymentStatus.PENDING) {
                 return paymentMapper.toDto(payment);
